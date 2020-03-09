@@ -27,8 +27,6 @@ def load_shakespeare():
 
     This function does no preprocessing.
     """
-    check_nltk_package('tokenizers/punkt')
-
     with open(SHAKESPEARE_PATH, 'r') as f:
         text = f.read()
     return [
@@ -43,8 +41,6 @@ def load_spenser():
 
     This function does no preprocessing.
     """
-    check_nltk_package('tokenizers/punkt')
-
     with open(SPENSER_PATH, 'r') as f:
         text = f.read()
     return [

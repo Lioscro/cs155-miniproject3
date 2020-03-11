@@ -44,7 +44,7 @@ class CharacterLSTM(Sequential):
             X[-1][choice] = 1
 
             # Update progress bar
+            pbar.update(generated.count('\n') - count)
             count = generated.count('\n')
-            pbar.update(count)
         pbar.close()
         return generated

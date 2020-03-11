@@ -17,8 +17,8 @@ class CharacterLSTM(Sequential):
         self.add(Lambda(lambda x: x / temperature))
         self.add(Activation('softmax'))
 
-    def generate(self, seed):
-        X = np.zeros((len(seed), n_chars))
+    def generate(self, seed, char_to_dim, dim_to_char):
+        X = np.zeros((len(seed), self.n_chars))
         indices = np.vstack((np.arange(len(seed)), [char_to_dim[char] for char in seed]))
         X[tuple(indices)] = 1
         generated = seed
@@ -27,7 +27,7 @@ class CharacterLSTM(Sequential):
         while generated.count('\n') < 14:
             probabilities = self.predict(np.expand_dims(X, 0)).flatten()
             #choice = np.argmax(probabilities)
-            choice = np.random.choice(np.arange(n_chars), p=probabilities)
+            choice = np.random.choice(np.arange(self.n_chars), p=probabilities)
             generated += dim_to_char[choice]
 
             # "Push back" X by one and add new prediction to the end.

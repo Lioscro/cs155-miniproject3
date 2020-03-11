@@ -8,6 +8,11 @@ class CharacterLSTM(Sequential):
     def __init__(self, units, window_size, n_chars, temperature=1, *args, **kwargs):
         super(CharacterLSTM, self).__init__(*args, **kwargs)
 
+        self.units = units
+        self.window_size = window_size
+        self.n_chars = n_chars
+        self.temperature = temperature
+
         # Add layers
         self.add(LSTM(
             units,
@@ -17,7 +22,7 @@ class CharacterLSTM(Sequential):
         self.add(Lambda(lambda x: x / temperature))
         self.add(Activation('softmax'))
 
-    def generate(self, seed, char_to_dim, dim_to_char):
+    def generate(self, seed, n_chars, char_to_dim, dim_to_char):
         X = np.zeros((len(seed), self.n_chars))
         indices = np.vstack((np.arange(len(seed)), [char_to_dim[char] for char in seed]))
         X[tuple(indices)] = 1

@@ -31,6 +31,7 @@ class CharacterLSTM(Sequential):
 
         # Loop until we have `n_lines` lines.
         pbar = tqdm(total=n_lines)
+        pbar.update(1)
         count = generated.count('\n')
         while count < n_lines:
             probabilities = self.predict(np.expand_dims(X, 0)).flatten()

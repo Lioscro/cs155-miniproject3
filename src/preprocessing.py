@@ -42,7 +42,7 @@ def encode_words_word2vec(sonnets, size=100, window=5, *args, **kwargs):
     also has useful functions such as `similar_by_vector` which can be used to find
     a word closest given an encoding.
     """
-    check_nltk_package('tokenize/punkt')
+    nltk.download('punkt')
 
     # nltk requires a list of sentences
     # each sentence is a list of words

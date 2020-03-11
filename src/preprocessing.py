@@ -10,8 +10,10 @@ def encode_characters_onehot(sonnets):
     `utils.load_shakespeare` or `utils.load_spenser`), generate character-based
     one-hot encoding. All characters are lowercased.
 
-    This function returns a dictionary encoding each character to a one-hot
-    encoded vector. Each vector is a numpy array.
+    This function returns a tuple of two elements.
+    The first is a dictionary encoding each character to a one-hot
+    encoded vector. Each vector is a numpy array. The second is a list of encoded
+    sonnets.
     """
     # Set of all characters.
     chars = set()
@@ -27,7 +29,16 @@ def encode_characters_onehot(sonnets):
         v[i] = 1
         encoding[char] = v
 
-    return encoding
+    # Encode the sonnets.
+    encoded_sonnets = []
+    for sonnet in sonnets:
+        encoded = []
+        for i, line in enumerate(sonnet):
+            encoded.extend([encoding[char] for char in line])
+            encoded.append(encoding['\n'])
+        encoded_sonnets.append(encoded)
+
+    return encoding, encoded_sonnets
 
 def encode_words_word2vec(sonnets, size=100, window=5, *args, **kwargs):
     """Given a list of lists, with the outer list containing sonnets and
@@ -37,10 +48,11 @@ def encode_words_word2vec(sonnets, size=100, window=5, *args, **kwargs):
     using `nltk.word_tokenize`. Any additional arguments are passed to the
     `Word2Vec` constructor. All characters are lowercased.
 
-    This function returns a gensim.models.keyedvectors.Word2VecKeyedVectors
+    This function returns a tuple of two elements.
+    The first is a gensim.models.keyedvectors.Word2VecKeyedVectors
     encoding each word to a vector. This object can be used like a dictionary, but
     also has useful functions such as `similar_by_vector` which can be used to find
-    a word closest given an encoding.
+    a word closest given an encoding. The second is a list of encoded sonnets.
     """
     nltk.download('punkt')
 
@@ -57,4 +69,11 @@ def encode_words_word2vec(sonnets, size=100, window=5, *args, **kwargs):
         sentences.append(s)
 
     w2v = Word2Vec(sentences, size=size, min_count=1, window=window, *args, **kwargs)
-    return w2v.wv
+    encoding = w2v.wv
+
+    # Encode.
+    encoded_sonnets = []
+    for sonnet in sentences:
+        encoded_sonnets.append([encoding[word] for word in sonnet])
+
+    return w2v.wv, encoded_sonnets

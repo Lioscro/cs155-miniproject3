@@ -8,7 +8,7 @@ def encode_characters_onehot(sonnets):
     """Given a list of lists, with the outer list containing sonnets and
     the inner list containing lines of sonnets (i.e. the output of
     `utils.load_shakespeare` or `utils.load_spenser`), generate character-based
-    one-hot encoding.
+    one-hot encoding. All characters are lowercased.
 
     This function returns a dictionary encoding each character to a one-hot
     encoded vector. Each vector is a numpy array.
@@ -17,7 +17,7 @@ def encode_characters_onehot(sonnets):
     chars = set()
     for sonnet in sonnets:
         for line in sonnet:
-            chars |= set(line)
+            chars |= set(line.lower())
     chars = list(sorted(chars))  # Needs to be sorted because sets have arbitrary order.
     n_chars = len(chars)
 
@@ -35,7 +35,7 @@ def encode_words_word2vec(sonnets, size=100, window=5, *args, **kwargs):
     `utils.load_shakespeare` or `utils.load_spenser`), generate word-based
     Word2Vec encoding of specified size. Internally, each line is tokenized
     using `nltk.word_tokenize`. Any additional arguments are passed to the
-    `Word2Vec` constructor.
+    `Word2Vec` constructor. All characters are lowercased.
 
     This function returns a gensim.models.keyedvectors.Word2VecKeyedVectors
     encoding each word to a vector. This object can be used like a dictionary, but
@@ -51,7 +51,7 @@ def encode_words_word2vec(sonnets, size=100, window=5, *args, **kwargs):
     for sonnet in sonnets:
         s = []
         for i, line in enumerate(sonnet):
-            s.extend(nltk.word_tokenize(line))
+            s.extend(nltk.word_tokenize(line.lower()))
             if i + 1 < len(sonnet):
                 s.append('\n')
         sentences.append(s)

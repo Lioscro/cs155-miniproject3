@@ -14,12 +14,6 @@ SHAKESPEARE_PARSER = re.compile(r'\s{19}[0-9]+\n(?P<sonnet>.+?)(?:\n\n\n|$)', re
 SPENSER_PARSER = re.compile(r'[IVXL]+\n\n(?P<sonnet>.+?)(?:\n\n|$)', re.DOTALL)
 LINE_PARSER = re.compile(r'\s*(?P<line>.+)\s*')
 
-def check_nltk_package(package):
-    try:
-        nltk.data.find(package)
-    except LookupError:
-        nltk.download(package)
-
 def load_shakespeare():
     """Load shakespeare.txt. Returns a list of lists.
     The outer list contains sonnets, the inner list contains lines.

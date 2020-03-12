@@ -1,6 +1,7 @@
 import nltk
 import numpy as np
 from gensim.models import Word2Vec
+import re
 
 from .utils import check_nltk_package
 
@@ -146,3 +147,35 @@ def encode_words_word2vec(sonnets, size=100, window=5, iter=100, *args, **kwargs
         encoded_sonnets.append(np.array([encoding[word] for word in sonnet], dtype=int))
 
     return w2v.wv, encoded_sonnets
+
+
+def create_sequences_sonnets(sonnets):
+    """
+    This creates sequences as done in Homework 6, by mapping each word
+    to an integer in order to create a series of sequences. This function
+    specifically makes entire sonnets into individual sequences
+    and returns the list of processed sonnets back to be used in the basic
+    HMM notebook for generation.
+    """
+    sequences = []
+    obs_counter = 0
+    obs_map = {}
+    for sonnet in sonnets:
+        sequence = []
+        for i, line in enumerate(sonnet):
+            split = line.split()
+            for word in split:
+                word = re.sub(r'[^\w]', '', word).lower()
+                if word not in obs_map:
+                    # Add unique words to the observations map.
+                    obs_map[word] = obs_counter
+                    obs_counter += 1
+                
+                # Add the encoded word.
+                sequence.append(obs_map[word])
+            
+        # Add the encoded sequence.
+        sequences.append(sequence)
+
+
+    return obs_map, sequences

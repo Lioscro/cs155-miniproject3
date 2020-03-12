@@ -51,13 +51,12 @@ def encode_words_onehot(sonnets):
     the inner list containing lines of sonnets (i.e. the output of
     `utils.load_shakespeare` or `utils.load_spenser`), generate word-based
     one-hot encoding. Internally, each line is tokenized
-    using `nltk.word_tokenize`. Any additional arguments are passed to the
-    `Word2Vec` constructor.
+    using `nltk.word_tokenize`.
     
     Preprocessing
     -------------
     - All characters are lowercased.
-    - All punctuation at the end of lines are removed
+    - All punctuation and special characters are removed (,.?!;:()).
     - The newline character `\n` is considered a word.
 
     This function returns a tuple of two elements.
@@ -65,9 +64,20 @@ def encode_words_onehot(sonnets):
     encoded vector. Each vector is a numpy array. The second is a list of encoded
     sonnets.
     """
-    # Lowercase all characters and remove all punctuation at the end of lines.
-    sonnets = [[line.lower().strip(',;?.:') for line in sonnet] for sonnet in sonnets]
-
+    remove = ',.?!:;()'
+    
+    # Remove all punctuation and special characters.
+    processed = []
+    for sonnet in sonnets:
+        p = []
+        for line in sonnet:
+            l = line.lower()
+            for char in remove:
+                l = l.replace(char, '')
+            p.append(l)
+        processed.append(p)
+    sonnets = processed
+    
     # Set of all words.
     words = set()
     for sonnet in sonnets:

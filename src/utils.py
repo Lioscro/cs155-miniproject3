@@ -1,11 +1,13 @@
 import os
+import pickle
 import re
 
 import nltk
 
 # Paths to text files
-ROOT_DIR = os.path.join(os.path.dirname(__file__), '..')
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
+MODELS_DIR = os.path.join(ROOT_DIR, 'models')
 SHAKESPEARE_PATH = os.path.join(DATA_DIR, 'shakespeare.txt')
 SPENSER_PATH = os.path.join(DATA_DIR, 'spenser.txt')
 SYLLABLE_PATH = os.path.join(DATA_DIR, 'Syllable_dictionary.txt')
@@ -19,6 +21,18 @@ def check_nltk_package(package):
         nltk.data.find(package)
     except LookupError:
         nltk.download(package)
+        
+def save_pickle(obj, path):
+    """Pickle and save a Python object to the given path.
+    """
+    with open(path, 'wb') as f:
+        pickle.dump(obj, f)
+    
+def load_pickle(path):
+    """Load a pickled Python object from the given path.
+    """
+    with open(path, 'rb') as f:
+        return pickle.load(f)
 
 def load_shakespeare():
     """Load shakespeare.txt. Returns a list of lists.

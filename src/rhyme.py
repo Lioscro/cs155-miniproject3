@@ -46,17 +46,23 @@ def get_individual_rhymes(sonnets):
     all_rhymes = []
     for sonnet in sonnets:
         tokens = [wordpunct_tokenize(s) for s in sonnet]
-        punct = set(['.', ',', '!', ':', ';'])
+        punct = set(['.', ',', '!', ':', ';', '?', '(', ')'])
         filtered = [ [w for w in sentence if w not in punct ] for sentence in tokens]
         last = [ sentence[len(sentence) - 1] for sentence in filtered]
 
+
+
+
         # now that we have a list of the last words, check the sonnets
         # specifically if it is the ababcdcdefefgg or the other scheme
-        pairs = [[last[0], last[2]], [last[1], last[3]], \
-                    [last[4], last[6]], [last[5], last[7]], \
-                    [last[8], last[10]], [last[9], last[11]], \
-                    [last[12], last[13]]]
-        all_rhymes += pairs
+        if (len(last) == 14):
+          pairs = [[last[0], last[2]], [last[1], last[3]], \
+                      [last[4], last[6]], [last[5], last[7]], \
+                      [last[8], last[10]], [last[9], last[11]], \
+                      [last[12], last[13]]]
+          all_rhymes += pairs
+        else:
+          print(f"Some weird sonnet appeared with length {len(last)}!")
 
     return all_rhymes
 

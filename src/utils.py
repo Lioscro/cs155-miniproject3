@@ -69,6 +69,8 @@ def syllable_dic():
     f = open(SYLLABLE_PATH, 'r')
     syllable_data = f.read()
     f.close()
+
+    remove = ',.?!:;()'
     
     syllable_data_split = syllable_data.split('\n')
     syllable_data_split.pop()
@@ -77,14 +79,26 @@ def syllable_dic():
     vals = []
     for elem in syllable_data_split:
         elem_split = elem.split(' ')
-        keys.append(elem_split[0])
+        new_key = elem_split[0].lower()
+        for char in remove:
+            new_key = new_key.replace(char, '')
+        keys.append(new_key)
+        keys.append(new_key + "_e")
         if len(elem_split) == 2:
             vals.append(elem_split[1])
-        elif len(elem_split) > 2:
-            if 'E' in elem_split[-1]:
+            vals.append(elem_split[1])
+        elif len(elem_split) == 3:
+            if 'E' in elem_split[1]:
+                vals.append(elem_split[2])
+                vals.append(elem_split[1][1])
+            elif 'E' in elem_split[2]:
                 vals.append(elem_split[1])
+                vals.append(elem_split[2][1])
             else:
-                vals.append(elem_split[-1])
+                vals.append(elem_split[2])
+                vals.append(elem_split[2])
+        else:
+            continue
     dic = {keys[i]: int(vals[i]) for i in range(len(keys))}
     
     return dic

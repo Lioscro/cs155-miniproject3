@@ -7,6 +7,10 @@
 ########################################
 
 import random
+import numpy as np
+from src import utils
+
+syllables_dic = utils.syllable_dic()
 
 class HiddenMarkovModel:
     '''
@@ -427,17 +431,70 @@ class HiddenMarkovModel:
 
         return emission, states
 
-    def generate_reverse_sonnet(self, M, start):
+    def generate_single_sentence(self, normal_map, reverse_map, initial):
+        # initial is the number corresponding to the first word
+
+        # try to find the last state probabilistically
+        # by grabbing the column
+        mat_O = np.array(self.O)
+        # grabs the column relating to word j
+        # TODO: find j from the map
+        j = normal_map[initial]
+        prob_initial = mat_O[:, j]
+        # normalize that column
+        prob_initial = prob_initial / np.sum(prob_initial)
+        # now perform the sampling for the initial state
+        last_state = int(np.random.choice(list(range(self.L)), 1, p = prob_initial))
+        # now we need to count the number of syllables in the initial word
+        # the _e is a special note to get the syllables associated if it
+        # at the end of a sentence
+        total_length = syllables_dic.get(initial + "_e")
+        # setup the final sentence to return
+        total_sentence = initial
+        # now we need to generate the rest of the sentence
+        total_attempts = 0
+        while (total_length < 10 and total_attempts < 100):
+            # generate a new state
+
+            # grab the column
+            mat_A = np.array(self.A)
+            prob_prev = mat_A[:, last_state]
+
+            # normalize
+            prob_prev = prob_prev / np.sum(prob_prev)
+            # now perform sampling for next state
+            old_state = last_state
+            last_state = int(np.random.choice(list(range(self.L)), 1, p = prob_prev))
+            # now try to find a word that works
+            new_emission = int(np.random.choice(list(range(self.D)), 1, p = self.O[last_state]))
+            new_word = reverse_map[new_emission]
+            new_syllables = syllables_dic.get(new_word)
+            if new_syllables is None:
+                new_syllables = 0
+            if (new_syllables <= 10 - total_length and new_syllables > 0):
+                total_length += new_syllables
+                total_sentence = new_word + " " + total_sentence
+            else:
+                last_state = old_state
+
+        return total_sentence.capitalize()
+
+    def generate_reverse_sonnet(self, start, normal_map, reverse_map):
         '''
         This is a special form of generation where the rhyming words
         are selected beforehand.
-        Generates an emission of length M, the starting state is selected
+        Generates a full sonnet, the starting state is selected
         probabilistically by selecting a state associaed with the ending word
         of the line and then using reverse selection of states.
         At each point, the number of syllables is counted to ensure that
         the word has 10 syllables only.
         '''
-        pass
+
+        final_sonnet = []
+        for word in start:
+            final_sonnet.append(self.generate_single_sentence(normal_map, reverse_map, word))
+        
+        return final_sonnet
 
 
     def probability_alphas(self, x):
@@ -608,3 +665,24 @@ def sample_sentence(hmm, obs_map, n_syllables=10):
     sentence = [obs_map_r[i] for i in emission]
 
     return ' '.join(sentence).capitalize()
+
+def sample_sonnet(hmm, obs_map, all_pairs):
+    '''
+    This is the function that should be called to generate a whole sonnet
+    '''
+
+    # generate the start list
+
+    # randomly grab 7 indices
+    indices = random.sample(list(range(len(all_pairs))), 7)
+
+    # generate the start
+    start = [all_pairs[indices[0]][0], all_pairs[indices[1]][0], all_pairs[indices[0]][1], all_pairs[indices[1]][1],\
+            all_pairs[indices[2]][0], all_pairs[indices[3]][0], all_pairs[indices[2]][1], all_pairs[indices[3]][1],\
+            all_pairs[indices[4]][0], all_pairs[indices[5]][0], all_pairs[indices[4]][1], all_pairs[indices[5]][1], \
+            all_pairs[indices[6]][0], all_pairs[indices[6]][1]]
+
+    reverse_map = obs_map_reverser(obs_map)
+    return hmm.generate_reverse_sonnet(start, obs_map, reverse_map)
+
+

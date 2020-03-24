@@ -61,3 +61,30 @@ def load_spenser():
         LINE_PARSER.findall(sonnet)
         for sonnet in SPENSER_PARSER.findall(text)
     ]
+
+def syllable_dic():
+    """Load Syllable_dictionary.txt. Returns a dictionary; keys are
+    words and values are syllables.    
+    """
+    f = open(SYLLABLE_PATH, 'r')
+    syllable_data = f.read()
+    f.close()
+    
+    syllable_data_split = syllable_data.split('\n')
+    syllable_data_split.pop()
+
+    keys = []
+    vals = []
+    for elem in syllable_data_split:
+        elem_split = elem.split(' ')
+        keys.append(elem_split[0])
+        if len(elem_split) == 2:
+            vals.append(elem_split[1])
+        elif len(elem_split) > 2:
+            if 'E' in elem_split[-1]:
+                vals.append(elem_split[1])
+            else:
+                vals.append(elem_split[-1])
+    dic = {keys[i]: int(vals[i]) for i in range(len(keys))}
+    
+    return dic

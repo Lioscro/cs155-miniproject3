@@ -10,11 +10,11 @@ def encode_characters_onehot(sonnets):
     the inner list containing lines of sonnets (i.e. the output of
     `utils.load_shakespeare` or `utils.load_spenser`), generate character-based
     one-hot encoding.
-    
+
     Preprocessing
     -------------
     - All characters are lowercased.
-    - The newline character `\n` is considered a word.
+    - The newline character `\n` is considered a character.
 
     This function returns a tuple of two elements.
     The first is a dictionary encoding each character to a one-hot
@@ -53,7 +53,7 @@ def encode_words_onehot(sonnets):
     `utils.load_shakespeare` or `utils.load_spenser`), generate word-based
     one-hot encoding. Internally, each line is tokenized
     using `nltk.word_tokenize`.
-    
+
     Preprocessing
     -------------
     - All characters are lowercased.
@@ -66,7 +66,7 @@ def encode_words_onehot(sonnets):
     sonnets.
     """
     remove = ',.?!:;()'
-    
+
     # Remove all punctuation and special characters.
     processed = []
     for sonnet in sonnets:
@@ -78,7 +78,7 @@ def encode_words_onehot(sonnets):
             p.append(l)
         processed.append(p)
     sonnets = processed
-    
+
     # Set of all words.
     words = set()
     for sonnet in sonnets:
@@ -112,7 +112,7 @@ def encode_words_word2vec(sonnets, size=100, window=5, iter=100, *args, **kwargs
     Word2Vec encoding of specified size. Internally, each line is tokenized
     using `nltk.word_tokenize`. Any additional arguments are passed to the
     `Word2Vec` constructor.
-    
+
     Preprocessing
     -------------
     - All characters are lowercased.
@@ -170,10 +170,10 @@ def create_sequences_sonnets(sonnets):
                     # Add unique words to the observations map.
                     obs_map[word] = obs_counter
                     obs_counter += 1
-                
+
                 # Add the encoded word.
                 sequence.append(obs_map[word])
-            
+
         # Add the encoded sequence.
         sequences.append(sequence)
 

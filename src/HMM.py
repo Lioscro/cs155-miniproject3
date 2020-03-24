@@ -427,6 +427,18 @@ class HiddenMarkovModel:
 
         return emission, states
 
+    def generate_reverse_sonnet(self, M, start):
+        '''
+        This is a special form of generation where the rhyming words
+        are selected beforehand.
+        Generates an emission of length M, the starting state is selected
+        probabilistically by selecting a state associaed with the ending word
+        of the line and then using reverse selection of states.
+        At each point, the number of syllables is counted to ensure that
+        the word has 10 syllables only.
+        '''
+        pass
+
 
     def probability_alphas(self, x):
         '''

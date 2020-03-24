@@ -179,3 +179,15 @@ def create_sequences_sonnets(sonnets):
 
 
     return obs_map, sequences
+
+
+def get_rhymes(sonnets):
+    """
+    This is a function that takes in all the sonnets and then attempts to 
+    store all of the words at the end of the sonnets in order to determine
+    which words rhyme with which other words. It then returns a completed
+    dictionary of rhyming words back to be used in the reverse seeding
+    generation of the sonnets
+    """
+    
+    pass
